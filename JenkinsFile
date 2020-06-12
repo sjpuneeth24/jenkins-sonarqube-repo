@@ -5,11 +5,7 @@ pipeline {
         stage('Compile') {
             steps {
                 echo 'Compile..'
-                script {
-                    sh '''#!/bin/bash
-                    chmod 755 ./gradlew
-                    ./gradlew clean build -x test'''
-                }
+                gradle clean
             }
         }
         stage('Test') {
@@ -20,6 +16,7 @@ pipeline {
         stage('SonarQube') {
             steps {
                 echo 'SonarQube....'
+                gradle sonarqube
             }
         }
     }
