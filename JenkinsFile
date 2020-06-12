@@ -1,12 +1,21 @@
 pipeline {
-    agent any 
+    agent any
+
     stages {
-        stage('Clean') { 
+        stage('Compile') {
             steps {
-                withGradle {
-                    sh './gradlew build'
-                }
-         	}
+                echo 'Compile..'
+            }
+        }
+        stage('Test') {
+            steps {
+                echo 'Testing..'
+            }
+        }
+        stage('SonarQube') {
+            steps {
+                echo 'SonarQube....'
+            }
         }
     }
 }
