@@ -6,7 +6,7 @@ pipeline {
             steps {
                 echo 'Compile..'
                 script {
-                    sh gradle clean
+                    gradle clean
                 }
             }
         }
