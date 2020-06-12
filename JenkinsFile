@@ -5,7 +5,9 @@ pipeline {
         stage('Compile') {
             steps {
                 echo 'Compile..'
-                bat gradle clean
+                script {
+                    ./gradle clean
+                }
             }
         }
         stage('Test') {
@@ -16,7 +18,6 @@ pipeline {
         stage('SonarQube') {
             steps {
                 echo 'SonarQube....'
-                bat gradle sonarqube
             }
         }
     }
