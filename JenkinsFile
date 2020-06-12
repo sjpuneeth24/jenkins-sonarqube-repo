@@ -1,0 +1,48 @@
+pipeline {
+    agent any 
+    stages {
+    	stage('Clean') { 
+            steps {
+            	withGradle {
+    				sh './gradlew build'
+  				}
+         	}
+        }
+        stage('Sonarqube') {
+            steps {
+                jacoco(
+                exclusionPattern: '**/src/test*,**/*CageServicesRepoImpl*,**/*HUConstant*'
+                )
+                script {
+                    def scannerHome = tool 'SonarQube_Scanner'
+                    def SONAR_PROJECT_KEY = 'jenkins-sonarqube'
+                    def SONAR_PROJECT_NAME= 'jenkins-sonarqube'
+                    def SONAR_SOURCES= 'src/main'
+                    def SONAR_TESTS= 'src/test'
+                    def SONAR_BINARIES= 'build'
+
+
+                    withSonarQubeEnv('SonarQube') {
+                        sh 'chmod +x gradlew'
+                        sh './gradlew sonarqube --info'
+
+                        sh "${scannerHome}/bin/sonar-scanner -X \
+                            -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
+                            -Dsonar.projectName=${SONAR_PROJECT_NAME} \
+                            -Dsonar.java.binaries=${SONAR_BINARIES} \
+                            -Dsonar.libraries=build/libs/*.jar \
+                            -Dsonar.java.libraries=build/libs/*.jar \
+                            -Dsonar.java.tests.libraries=build/libs/*.jar \
+                            -Dsonar.sources=${SONAR_SOURCES} \
+                            -Dsonar.tests=${SONAR_TESTS} \
+                            -Dsonar.junit.reportPaths=build/test-results/test \
+                            -Dsonar.jacoco.reportPaths=build/jacoco/test.exec \
+                            -Dsonar.scm.disabled=true"
+                    }
+
+                }
+            }
+
+        }
+    }
+}
